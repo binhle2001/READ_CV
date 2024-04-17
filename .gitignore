@@ -1,0 +1,5 @@
+.venv
+.env
+**/__pycache__
+ai_core/data_cv
+ai_core/token
