@@ -30,12 +30,12 @@
   uvicorn api.main:app --host 0.0.0.0 --port 8001 --reload
 ```
 # 2. Number of tokens in each CV in the dataset
-| Statistic      | Value    |
-|----------------|----------|
-| Mean           | 1025.67  |
-| Median         | 933 |
-| Min            | 461  |
-| Max            | 3122  |
-| Mode           | 1045  |
-| Std Deviation  | 377.67 |
+| Statistic      | INPUT    | OUTPUT    |
+|----------------|----------|----------|
+| Mean           | 1025.67  | 378  |
+| Median         | 933 | 341 |
+| Min            | 461  |97  |
+| Max            | 3122  |1845 |
+| Mode           | 1045  | 231 |
+| Std Deviation  | 377.67 |  187.45 |
 ## Note: To switch the LLM model for filtering CV information, please refer to file "ai_core/source/reading_cv.py".
