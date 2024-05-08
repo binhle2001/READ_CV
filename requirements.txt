@@ -9,3 +9,4 @@ uvicorn
 pymysql
 apscheduler
 boto3
+python-multipart

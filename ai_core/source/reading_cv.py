@@ -1,5 +1,5 @@
 import logging
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import io
@@ -46,7 +46,7 @@ info_format = """{
     "Technical_skills": []
 }"""
 
-
+''' 
 def extract_pdf_info(tenant_id):
     ProcessStatus.list_tenant[tenant_id] = True
     data_cv = get_attachment(tenant_id)
@@ -118,7 +118,61 @@ def extract_pdf_info(tenant_id):
     ProcessStatus.list_tenant[tenant_id] = False
     return candidate_informations
 
-def push_data_to_DB(tenant_id):
+'''
+
+def extract_candidate_info(contents):
+    pdf_info = extract_info_from_pdf(contents)
+    if pdf_info.text == "":
+        logging.error("Định dạng file không hỗ trợ")
+        return {
+            "http_code": status.HTTP_400_BAD_REQUEST,
+            "message": "Định dạng file không hỗ trợ"
+        }
+    prompt = f"""
+            <|im_start|> DOCUMENT
+            {pdf_info.text}
+            <|im_end|>
+            <|im_start|> system
+            Tokyo Tech Lab Bot is a bot designed to extract information from the content of PDF files. Tokyo Tech Lab Bot is capable of:
+            - Please rewrite this with correct spelling. For example: "Đ ạ i h ọ c Qu ố c Gia Hà N ộ i" is changed to "Đại học Quốc Gia Hà Nội".
+            - Extracting information such as name, position applied for, phone number, email, work experience/projects undertaken, education, skills.
+            - Providing responses in the form of a dictionary as follows:
+            {info_format}
+            - Do not use external knowledge beyond the information provided in the DOCUMENT. If information is not provided, write "null". If a field has no information, return the entire field as null.
+            <|im_end|>
+            <|im_start|> assistant
+            """.strip()
+    output = model_gemini.generate_content(
+        prompt,
+        generation_config=genai.types.GenerationConfig(
+                                    candidate_count = 1,
+                                    stop_sequences = ['<|im_end|>'],
+                                    max_output_tokens = 2000,
+                                    top_p = 0.9,
+                                    top_k = 7,
+                                    temperature = 0.1),
+        safety_settings={
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+        },
+
+    )
+    try:
+        parse_data = json.loads(output.text.replace("\n", ""))
+        return parse_data
+            
+    except Exception as e:
+            
+        return {
+            "http_code": status.HTTP_400_BAD_REQUEST,
+            "message": str(e),
+        }
+
+'''
+
+def push_data_to_DB(tenant_id): #Khi nào đổi flow sang lưu vào db thì dùng cái này
     conn = get_db(tenant_id)
     if conn is None:
         logging.error("Can't connect database")
@@ -129,6 +183,7 @@ def push_data_to_DB(tenant_id):
         if candidates is None: 
             logging.error("Tenant not found")
         else:
+
             cursor = conn.cursor()
             for candidate  in candidates:
                 if "isFalse" not in candidate:
@@ -154,3 +209,4 @@ def push_data_to_DB(tenant_id):
                     conn.commit()
 
 
+'''
