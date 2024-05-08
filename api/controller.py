@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from .schema import ProcessStatus, Hook
 from fastapi.responses import JSONResponse
 import httpx
+from typing import List
 
 from ai_core.source.reading_cv import extract_candidate_info #, push_data_to_DB
 
@@ -25,11 +26,20 @@ async def read_root():
     "/read-cv",
     summary= "api hook for get and extract CV email"
 )
-async def get_all_candidate_info(file: UploadFile = File(...)):
-
-    contents = await file.read()
-    candidate_info = extract_candidate_info(contents)
-    return JSONResponse(status_code=status.HTTP_200_OK, content=candidate_info)
+async def get_all_candidate_info(files: List[UploadFile] = File(...)):
+    candidate_infors = []
+    for file in files:
+        contents = await file.read()
+        candidate_infor = extract_candidate_info(contents)
+        candidate_infors.append({
+            "file_name": file.filename,
+            "candidate_info": candidate_infor
+        })
+    response = {
+        "http_code": status.HTTP_200_OK,
+        "data": candidate_infors
+    }
+    return JSONResponse(status_code=status.HTTP_200_OK, content=response)
 
 
     
