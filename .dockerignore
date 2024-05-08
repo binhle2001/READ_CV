@@ -1,0 +1,15 @@
+.venv/
+.git/
+**/*/__pycache__/
+.venv
+EAC_API/.env
+image_temp.jpg
+**/.DS_Store
+**/__pycache__
+
+venv/
+quan/
+quan_/
+face_ttlab/
+face_ttlab1/
+model/
