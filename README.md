@@ -27,7 +27,7 @@
 ```
 ## 1.3 Run API
 ```
-  uvicorn api.main:app --host 0.0.0.0 --port 8001 --reload
+  uvicorn api.main:app --host 0.0.0.0 --port 5000 --reload
 ```
 # 2. Number of tokens in each CV in the dataset
 | Statistic      | INPUT    | OUTPUT    |
