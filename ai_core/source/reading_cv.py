@@ -161,7 +161,10 @@ def extract_candidate_info(contents):
     )
     try:
         parse_data = json.loads(output.text.replace("\n", ""))
-        return parse_data
+        return {
+            "http_code": status.HTTP_200_OK,
+            "message": str(e),
+        }
             
     except Exception as e:
             

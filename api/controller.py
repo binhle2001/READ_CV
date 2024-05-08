@@ -29,11 +29,7 @@ async def get_all_candidate_info(file: UploadFile = File(...)):
 
     contents = await file.read()
     candidate_info = extract_candidate_info(contents)
-    response = {
-        "http_code": status.HTTP_200_OK,
-        "content": candidate_info
-    }
-    return JSONResponse(status_code=status.HTTP_200_OK, content=response)
+    return JSONResponse(status_code=status.HTTP_200_OK, content=candidate_info)
 
 
     
