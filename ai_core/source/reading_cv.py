@@ -122,10 +122,7 @@ def extract_candidate_info(contents):
     pdf_info = extract_info_from_pdf(contents)
     if pdf_info.text == "":
         logging.error("Định dạng file không hỗ trợ")
-        return {
-            "http_code": status.HTTP_400_BAD_REQUEST,
-            "message": "Định dạng file không hỗ trợ"
-        }
+        return None
     model="gpt-3.5-turbo"
     SYSTEM_CONTENT = f"""Tokyo Tech Lab Bot is a bot designed to extract information from the content of PDF files. Tokyo Tech Lab Bot is capable of:
         - Please rewrite this with correct spelling. For example: "Đ ạ i h ọ c Qu ố c Gia Hà N ộ i" is changed to "Đại học Quốc Gia Hà Nội".
@@ -144,17 +141,11 @@ def extract_candidate_info(contents):
     output = response.choices[0].message.content
     try:
         parse_data = json.loads(output.replace("\n", ""))
-        return {
-            "http_code": status.HTTP_200_OK,
-            "data": parse_data,
-        }
+        return parse_data
             
     except Exception as e:
             
-        return {
-            "http_code": status.HTTP_400_BAD_REQUEST,
-            "message": str(e),
-        }
+        return None
 
 '''
 
